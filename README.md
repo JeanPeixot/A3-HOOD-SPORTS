@@ -65,7 +65,6 @@ O projeto une a experiência de uma **Landing Page de Alta Conversão** com um *
 
 1. Abra o terminal na pasta do projeto:
    ```bash
-   cd c:\Users\jean\Downloads\A3-LojaSports
    ```
 
 2. Instale as dependências (já instaladas):
