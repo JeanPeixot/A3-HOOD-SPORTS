@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenReservations }) => {
 
   const totalCartItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleNavCategory = (cat: 'shoes' | 'apparel' | 'equipment' | 'all') => {
+  const handleNavCategory = (cat: 'shoes' | 'apparel' | 'equipment' | 'times' | 'all') => {
     setSelectedCategory(cat);
     setIsMobileMenuOpen(false);
     const catalogEl = document.getElementById('catalogo');
@@ -59,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenReservations }) => {
             <div className="relative w-full">
               <input
                 type="text"
-                placeholder="Buscar tênis, roupas, equipamentos..."
+                placeholder="Buscar tênis, camisas de time, roupas..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-[#131822] border border-[#232D42] rounded-full py-2.5 pl-11 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF] transition"
@@ -77,12 +77,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenReservations }) => {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">
+          <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-gray-300">
             <button 
               onClick={() => handleNavCategory('all')} 
               className="hover:text-[#00E5FF] transition"
             >
               Catálogo
+            </button>
+            <button 
+              onClick={() => handleNavCategory('times')} 
+              className="hover:text-[#00E5FF] transition font-semibold text-white flex items-center gap-1.5"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse" />
+              Times
             </button>
             <button 
               onClick={() => handleNavCategory('shoes')} 
@@ -201,6 +208,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenReservations }) => {
             className="block w-full text-left py-2 text-sm text-gray-200 hover:text-[#00E5FF]"
           >
             Todos os Produtos
+          </button>
+          <button 
+            onClick={() => handleNavCategory('times')} 
+            className="block w-full text-left py-2 text-sm text-white font-bold hover:text-[#00E5FF] flex items-center justify-between"
+          >
+            <span>Camisas de Times (Série A)</span>
+            <span className="text-[10px] bg-[#00E5FF] text-black px-2 py-0.5 rounded font-extrabold">NOVO</span>
           </button>
           <button 
             onClick={() => handleNavCategory('shoes')} 

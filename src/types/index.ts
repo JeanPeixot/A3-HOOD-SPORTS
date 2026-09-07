@@ -1,9 +1,9 @@
-export type Category = 'shoes' | 'apparel' | 'equipment' | 'all';
+export type Category = 'shoes' | 'apparel' | 'equipment' | 'times' | 'all';
 
 export interface Product {
   id: string;
   name: string;
-  category: 'shoes' | 'apparel' | 'equipment';
+  category: 'shoes' | 'apparel' | 'equipment' | 'times';
   variant: string;
   originalPrice: number;
   price: number;

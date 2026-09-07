@@ -66,6 +66,11 @@ export const Footer: React.FC = () => {
                 </button>
               </li>
               <li>
+                <button onClick={() => { setIsPdvView(false); setSelectedCategory('times'); }} className="hover:text-[#00E5FF] transition font-semibold text-white">
+                  ⚽ Camisas de Times (Série A)
+                </button>
+              </li>
+              <li>
                 <button onClick={() => { setIsPdvView(false); setSelectedCategory('shoes'); }} className="hover:text-[#00E5FF] transition">
                   Calçados / Shoes
                 </button>

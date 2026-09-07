@@ -21,7 +21,7 @@ export const PdvTerminalView: React.FC = () => {
     setIsPdvView
   } = useStore();
 
-  const [activeCategory, setActiveCategory] = useState<'shoes' | 'apparel' | 'equipment'>('shoes');
+  const [activeCategory, setActiveCategory] = useState<'shoes' | 'apparel' | 'equipment' | 'times'>('shoes');
   const [localSearch, setLocalSearch] = useState('');
 
   const filteredProducts = products.filter(p => {
@@ -91,16 +91,16 @@ export const PdvTerminalView: React.FC = () => {
             <Search className="absolute left-4 top-3.5 h-4 w-4 text-gray-400" />
           </div>
 
-          {/* Category Selector Pills (Matching exact Mockup) */}
-          <div className="grid grid-cols-3 gap-2">
-            {(['shoes', 'apparel', 'equipment'] as const).map((cat) => {
-              const labels = { shoes: 'Shoes', apparel: 'Apparel', equipment: 'Equipment' };
+          {/* Category Selector Pills (Matching exact Mockup + Times) */}
+          <div className="grid grid-cols-4 gap-1.5">
+            {(['shoes', 'times', 'apparel', 'equipment'] as const).map((cat) => {
+              const labels = { shoes: 'Shoes', times: 'Times', apparel: 'Apparel', equipment: 'Equip.' };
               const isActive = activeCategory === cat;
               return (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`py-2 px-3 rounded-xl font-bold text-xs tracking-wider transition uppercase ${
+                  className={`py-2 px-2 rounded-xl font-bold text-[11px] sm:text-xs tracking-wider transition uppercase truncate ${
                     isActive
                       ? 'bg-[#00E5FF] text-black shadow-cyan-sm'
                       : 'bg-[#18202E] text-gray-300 border border-[#273248] hover:border-gray-500'

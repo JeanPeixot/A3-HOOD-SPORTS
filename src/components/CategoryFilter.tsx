@@ -12,6 +12,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({ className = '' }
   const categories: { id: Category; label: string; count?: number }[] = [
     { id: 'all', label: 'Todos' },
     { id: 'shoes', label: 'Shoes' },
+    { id: 'times', label: 'Times' },
     { id: 'apparel', label: 'Apparel' },
     { id: 'equipment', label: 'Equipment' },
   ];
