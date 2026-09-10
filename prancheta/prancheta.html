@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prancheta do Projeto — Gestão e Garantia da Qualidade de Software</title>
+<style>
+:root{
+  --blueprint:#0F2A44;
+  --blueprint-deep:#0A1D30;
+  --grid-line:rgba(159,199,222,0.14);
+  --paper:#F2EEE3;
+  --paper-line:#E4DCC8;
+  --ink:#132436;
+  --gold:#C79A3C;
+  --gold-deep:#9C7A2C;
+  --pass:#3F7D5C;
+  --pass-bg:#E4EFE6;
+  --warn:#B9812E;
+  --warn-bg:#F6EBD8;
+  --fail:#B14738;
+  --fail-bg:#F5E4E0;
+  --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+  --sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  --mono: 'Courier New', monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--sans);
+  background:var(--blueprint-deep);
+  color:var(--ink);
+  min-height:100vh;
+}
+
+/* ===== SHEET WRAPPER (blueprint feel) ===== */
+.sheet-frame{
+  max-width:1180px;
+  margin:0 auto;
+  padding:28px 18px 60px;
+}
+.sheet{
+  background:
+    repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 28px),
+    var(--blueprint);
+  border:1px solid rgba(199,154,60,0.35);
+  border-radius:2px;
+  position:relative;
+  padding:26px 26px 0;
+  color:#EAF2F8;
+}
+.sheet::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(199,154,60,0.55);
+  pointer-events:none;
+}
+.corner-mark{position:absolute;width:14px;height:14px;border:1.5px solid var(--gold);opacity:.8}
+.corner-mark.tl{top:2px;left:2px;border-right:none;border-bottom:none}
+.corner-mark.tr{top:2px;right:2px;border-left:none;border-bottom:none}
+.corner-mark.bl{bottom:2px;left:2px;border-right:none;border-top:none}
+.corner-mark.br{bottom:2px;right:2px;border-left:none;border-top:none}
+
+/* ===== HEADER / TITLE BLOCK ===== */
+.eyebrow{
+  font-size:11px;
+  letter-spacing:1px;
+  color:#9FC7DE;
+  font-family:var(--mono);
+}
+h1.title{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:34px;
+  margin:6px 0 2px;
+  color:#fff;
+  line-height:1.15;
+}
+.subtitle{
+  font-size:14.5px;
+  color:#BFD7E8;
+  max-width:640px;
+  line-height:1.5;
+  margin-bottom:18px;
+}
+.stamp{
+  position:absolute;
+  top:26px;
+  right:26px;
+  border:2px solid var(--gold);
+  color:var(--gold);
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:13px;
+  padding:6px 14px;
+  transform:rotate(-4deg);
+  border-radius:3px;
+  letter-spacing:.5px;
+}
+
+/* ===== TITLE FIELDS ROW (editable) ===== */
+.field-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:rgba(199,154,60,0.35);
+  margin:0 0 0;
+  border-top:1px solid rgba(199,154,60,0.35);
+}
+.field{
+  background:var(--blueprint);
+  padding:10px 14px 12px;
+}
+.field label{
+  display:block;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.6px;
+  color:#8FB8D4;
+  margin-bottom:4px;
+}
+.field [contenteditable]{
+  font-size:14px;
+  color:#fff;
+  outline:none;
+  border-bottom:1px dashed rgba(255,255,255,0.25);
+  padding-bottom:2px;
+  min-height:18px;
+}
+.field [contenteditable]:focus{border-bottom:1px solid var(--gold)}
+.field [contenteditable]:empty:before{content:attr(data-ph);color:#5F84A0}
+
+/* ===== TABS ===== */
+.tabs{
+  display:flex;
+  gap:2px;
+  margin:22px 0 0;
+  border-bottom:1px solid rgba(199,154,60,0.35);
+  overflow-x:auto;
+}
+.tab-btn{
+  background:transparent;
+  border:none;
+  color:#9FC7DE;
+  font-family:var(--sans);
+  font-size:13px;
+  font-weight:600;
+  padding:12px 16px;
+  cursor:pointer;
+  white-space:nowrap;
+  border-bottom:2px solid transparent;
+  transition:.15s;
+}
+.tab-btn:hover{color:#fff}
+.tab-btn.active{color:#fff;border-bottom:2px solid var(--gold)}
+
+/* ===== PANEL (paper page) ===== */
+.panel{
+  display:none;
+  background:var(--paper);
+  color:var(--ink);
+  margin:0 -26px;
+  padding:32px 30px 40px;
+}
+.panel.active{display:block}
+.panel h2{
+  font-family:var(--serif);
+  font-size:23px;
+  font-weight:400;
+  margin:0 0 4px;
+  color:var(--blueprint);
+}
+.panel .lead{
+  font-size:13.5px;
+  color:#5A5138;
+  max-width:720px;
+  margin-bottom:22px;
+  line-height:1.55;
+}
+.section{margin-bottom:34px}
+.section-title{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:1px;
+  color:var(--gold-deep);
+  text-transform:uppercase;
+  border-bottom:1px solid var(--paper-line);
+  padding-bottom:6px;
+  margin-bottom:14px;
+}
+
+/* ===== ISO 25010 GRID ===== */
+.iso-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:12px;
+}
+.iso-card{
+  background:#fff;
+  border:1px solid var(--paper-line);
+  border-left:4px solid var(--gold);
+  padding:14px 16px;
+  border-radius:2px;
+}
+.iso-card h3{margin:0 0 6px;font-size:14.5px;font-family:var(--sans);color:var(--blueprint)}
+.iso-card p{margin:0 0 8px;font-size:12px;color:#6b6248}
+.iso-card [contenteditable]{
+  font-size:12.5px;
+  min-height:34px;
+  border-top:1px dashed var(--paper-line);
+  padding-top:6px;
+  outline:none;
+  color:var(--ink);
+}
+.iso-card [contenteditable]:empty:before{content:attr(data-ph);color:#a89f86;font-style:italic}
+
+/* ===== TEST PYRAMID ===== */
+.pyramid-wrap{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+.pyramid-notes{flex:1;min-width:260px}
+.pyr-level{
+  border:1px solid var(--paper-line);
+  border-left:4px solid;
+  padding:10px 14px;
+  margin-bottom:10px;
+  background:#fff;
+  font-size:13px;
+}
+.pyr-level.e2e{border-left-color:var(--fail)}
+.pyr-level.integ{border-left-color:var(--warn)}
+.pyr-level.unit{border-left-color:var(--pass)}
+.pyr-level strong{display:block;margin-bottom:3px;font-size:13.5px}
+.pyr-level [contenteditable]{outline:none;color:#3d3626}
+.pyr-level [contenteditable]:empty:before{content:attr(data-ph);color:#a89f86;font-style:italic}
+
+/* ===== ISHIKAWA ===== */
+.ishikawa-effect{
+  font-family:var(--serif);
+  font-size:15px;
+  background:var(--blueprint);
+  color:#fff;
+  padding:10px 16px;
+  display:inline-block;
+  border-radius:2px;
+  margin-bottom:14px;
+}
+.ishikawa-effect [contenteditable]{outline:none}
+.ishikawa-effect [contenteditable]:empty:before{content:attr(data-ph);color:#9FC7DE}
+.bone-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+}
+.bone{
+  background:#fff;
+  border:1px solid var(--paper-line);
+  border-top:3px solid var(--gold);
+  padding:10px 14px 12px;
+}
+.bone h4{margin:0 0 8px;font-size:12.5px;font-family:var(--mono);letter-spacing:.4px;color:var(--gold-deep);text-transform:uppercase}
+.bone ul{margin:0;padding-left:16px;font-size:12.5px;color:#3d3626}
+.bone li{margin-bottom:4px}
+.bone li[contenteditable]{outline:none;list-style:disc}
+.bone li[contenteditable]:empty:before{content:attr(data-ph);color:#a89f86;font-style:italic}
+
+/* ===== PARETO / CEP shared card ===== */
+.data-card{
+  background:#fff;
+  border:1px solid var(--paper-line);
+  padding:16px 18px 20px;
+  margin-bottom:16px;
+}
+.data-card .hint{font-size:11.5px;color:#8a8062;font-family:var(--mono);margin-bottom:10px}
+.editable-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:12px}
+.editable-table th{
+  text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.4px;
+  text-transform:uppercase;color:var(--gold-deep);border-bottom:1px solid var(--paper-line);padding:6px 8px;
+}
+.editable-table td{border-bottom:1px solid #EFE9D8;padding:5px 8px}
+.editable-table input[type=text]{width:100%;border:none;background:transparent;font-size:12.5px;font-family:var(--sans);color:var(--ink);outline:none}
+.editable-table input[type=number]{width:70px;border:1px solid var(--paper-line);padding:3px 6px;font-size:12.5px;border-radius:2px}
+.small-btn{
+  font-family:var(--sans);font-size:11.5px;font-weight:600;background:var(--blueprint);color:#fff;
+  border:none;padding:6px 12px;border-radius:3px;cursor:pointer;
+}
+.small-btn.secondary{background:#fff;color:var(--blueprint);border:1px solid var(--blueprint)}
+svg.chart{width:100%;height:auto;display:block}
+.axis-label{font-size:10px;fill:#8a8062;font-family:var(--mono)}
+
+/* ===== TESTES tab ===== */
+.log-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.log-table th{
+  text-align:left;background:var(--blueprint);color:#fff;font-family:var(--mono);
+  font-size:10.5px;letter-spacing:.4px;padding:8px 10px;
+}
+.log-table td{border-bottom:1px solid var(--paper-line);padding:7px 10px;vertical-align:top}
+.log-table td[contenteditable]{outline:none}
+.log-table td[contenteditable]:empty:before{content:attr(data-ph);color:#a89f86;font-style:italic}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+.tag.pass{background:var(--pass-bg);color:var(--pass)}
+.tag.warn{background:var(--warn-bg);color:var(--warn)}
+.tag.fail{background:var(--fail-bg);color:var(--fail)}
+select.tagselect{font-size:11.5px;border:1px solid var(--paper-line);border-radius:3px;padding:3px 6px;background:#fff}
+
+/* ===== TELAS tab ===== */
+.screen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.screen-card{background:#fff;border:1px solid var(--paper-line)}
+.screen-thumb{
+  height:130px;border-bottom:1px solid var(--paper-line);
+  background:
+    repeating-linear-gradient(45deg, #F7F4EC 0 8px, #EFEAD9 8px 16px);
+  display:flex;align-items:center;justify-content:center;
+  color:#a89f86;font-size:11.5px;font-family:var(--mono);text-align:center;padding:10px;
+}
+.screen-body{padding:10px 12px 12px}
+.screen-body input[type=text]{width:100%;border:none;font-family:var(--sans);font-weight:600;font-size:13px;color:var(--blueprint);outline:none;margin-bottom:6px;background:transparent}
+.screen-body select{width:100%;font-size:11.5px;border:1px solid var(--paper-line);border-radius:3px;padding:4px 6px;margin-bottom:6px}
+.screen-body [contenteditable]{font-size:11.5px;color:#5a5138;min-height:28px;outline:none}
+.screen-body [contenteditable]:empty:before{content:attr(data-ph);color:#a89f86;font-style:italic}
+
+/* ===== CHECKLIST tab ===== */
+.checklist{list-style:none;margin:0;padding:0}
+.checklist li{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:10px 4px;border-bottom:1px solid var(--paper-line);font-size:13.5px;
+}
+.checklist input[type=checkbox]{margin-top:3px;width:15px;height:15px;accent-color:var(--pass)}
+.checklist .item-body{flex:1}
+.checklist .item-body strong{display:block;color:var(--blueprint);font-size:13.5px}
+.checklist .item-body span{font-size:12px;color:#6b6248}
+
+.add-row-wrap{margin-top:8px}
+
+/* ===== SAVE BAR ===== */
+.save-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  margin-top:16px;padding:10px 16px;
+  background:rgba(199,154,60,0.12);border:1px solid rgba(199,154,60,0.45);border-radius:3px;
+}
+.save-bar .txt{font-size:11.5px;color:#BFD7E8;max-width:520px;line-height:1.4}
+.save-btn{
+  background:var(--gold);color:var(--blueprint-deep);font-weight:700;border:none;
+  padding:9px 18px;border-radius:3px;cursor:pointer;font-size:13px;letter-spacing:.2px;font-family:var(--sans);
+  white-space:nowrap;
+}
+.save-btn:hover{background:#DDB456}
+
+/* ===== TELAS paste / remove ===== */
+.screen-card{position:relative}
+.screen-thumb{cursor:pointer;background-size:cover;background-position:center;transition:.15s}
+.screen-thumb:focus{outline:2px solid var(--gold)}
+.screen-thumb.has-image{color:transparent;font-size:0}
+.screen-remove-img{display:none;font-size:10.5px;color:var(--fail);background:none;border:none;cursor:pointer;padding:2px 12px 0;text-align:left}
+.screen-thumb.has-image + .screen-remove-img{display:block}
+.screen-remove-card{position:absolute;top:6px;right:8px;font-size:15px;line-height:1;color:#fff;background:rgba(15,42,68,0.55);border:none;border-radius:50%;width:20px;height:20px;cursor:pointer}
+.screen-remove-card:hover{background:var(--fail)}
+
+/* ===== REQUISITOS ===== */
+.req-table select{font-size:12px;border:1px solid var(--paper-line);border-radius:3px;padding:3px 5px;background:#fff}
+.req-table td[contenteditable]{outline:none;min-height:20px}
+.req-table td[contenteditable]:empty:before{content:attr(data-ph);color:#a89f86;font-style:italic}
+.req-tipo-tag{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:9px}
+.req-tipo-tag.func{background:var(--pass-bg);color:var(--pass)}
+.req-tipo-tag.nfunc{background:var(--warn-bg);color:var(--warn)}
+
+footer.sheet-footer{
+  border-top:1px solid rgba(199,154,60,0.35);
+  margin:0 -26px;
+  padding:14px 26px;
+  display:flex;
+  justify-content:space-between;
+  font-family:var(--mono);
+  font-size:10.5px;
+  color:#8FB8D4;
+  letter-spacing:.4px;
+}
+@media (max-width:720px){
+  .field-row{grid-template-columns:repeat(2,1fr)}
+  .stamp{position:static;display:inline-block;margin-top:10px;transform:none}
+}
+
+/* Conteúdo da análise: legibilidade de respostas extensas e wireframes documentais. */
+.analysis-note{background:#fff8e7;border-left:4px solid var(--gold);padding:14px 16px;margin-bottom:22px;font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.analysis-note a{color:var(--blueprint);font-weight:600}
+[contenteditable],.screen-body{line-height:1.6;overflow-wrap:anywhere}
+.screen-thumb{height:175px;flex-direction:column;gap:7px;background:#102337;color:#eaf2f8;font-size:11px}
+.screen-thumb small{font-size:8px;color:#d5b972}
+.screen-thumb div{width:100%;border:1px solid #42617b;padding:5px;background:#19354d}
+.screen-thumb.has-image>*{visibility:hidden}
+.field-row{grid-template-columns:1.2fr 1fr 1.4fr .8fr}
+@media(max-width:700px){.field-row{grid-template-columns:1fr 1fr}.panel{overflow-x:auto}.req-table,.log-table{min-width:820px}.stamp{position:static;display:inline-block;margin-bottom:12px}}
+</style>
+</head>
+<body>
+
+<div class="sheet-frame">
+  <div class="sheet">
+    <div class="corner-mark tl"></div><div class="corner-mark tr"></div>
+    <div class="corner-mark bl"></div><div class="corner-mark br"></div>
+
+    <div class="eyebrow">GESTÃO E GARANTIA DA QUALIDADE DE SOFTWARE — PROJETO INTEGRADO</div>
+    <h1 class="title">Prancheta do Projeto</h1>
+    <div class="subtitle">Um único documento vivo para teoria e prática: da fundamentação em ISO 25010 e SQA até os artefatos de chão de fábrica — Ishikawa, Pareto e CEP — aplicados ao sistema que a equipe está construindo.</div>
+    <div class="stamp">ANÁLISE PREENCHIDA</div>
+
+    <div class="field-row">
+      <div class="field"><label>Nome do sistema</label><div contenteditable="true" data-ph="ex.: EstoqueCerto">HOOD SPORTS — Loja Virtual e Terminal PDV</div></div>
+      <div class="field"><label>Equipe</label><div contenteditable="true" data-ph="nomes dos integrantes">Equipe A3 HOOD SPORTS; integrantes não identificados na documentação do repositório.</div></div>
+      <div class="field"><label>Domínio / problema</label><div contenteditable="true" data-ph="ex.: gestão de biblioteca">Comércio de artigos esportivos: catálogo, venda simulada, reservas e fidelidade.</div></div>
+      <div class="field"><label>Revisão</label><div contenteditable="true" data-ph="v0.1 — 31/08/2026">v1.0 — análise de 10/09/2026</div></div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="t1">Visão Geral</button>
+      <button class="tab-btn" data-tab="treq">Requisitos</button>
+      <button class="tab-btn" data-tab="t2">ISO 25010 &amp; SQA</button>
+      <button class="tab-btn" data-tab="t3">Ishikawa</button>
+      <button class="tab-btn" data-tab="t4">Pareto</button>
+      <button class="tab-btn" data-tab="t5">CEP</button>
+      <button class="tab-btn" data-tab="t6">Testes</button>
+      <button class="tab-btn" data-tab="t7">Telas</button>
+      <button class="tab-btn" data-tab="t8">Entrega</button>
+    </div>
+
+    <!-- ================= TAB 1 — VISÃO GERAL ================= -->
+    <div class="panel active" id="t1">
+      <div class="analysis-note"><strong>Base da análise:</strong> funcionalidades, regras de negócio, experiência de compra e limitações atuais da HOOD SPORTS. A avaliação contempla catálogo, carrinho, reservas, pagamentos simulados e fidelidade. A inscrição em novidades apenas exibe uma confirmação, sem registrar ou enviar e-mails; entrega, rastreamento, trocas e suporte são apresentados como informações, sem operações disponíveis. A preparação da versão para distribuição foi validada em 10/09/2026.</div>
+      <h2>Visão geral do projeto</h2>
+      <p class="lead">Descreva em poucas frases o que o sistema faz, para quem, e qual efeito indesejado (o "defeito" no sentido amplo) ele existe para evitar. Essa última frase vira o efeito do seu diagrama de Ishikawa na aba seguinte.</p>
+
+      <div class="section">
+        <div class="section-title">O que o sistema faz</div>
+        <div contenteditable="true" data-ph="Escreva aqui, em 3 a 5 frases, o propósito do sistema e o público-alvo." style="background:#fff;border:1px solid var(--paper-line);padding:14px 16px;min-height:70px;font-size:13.5px;outline:none">A HOOD SPORTS é um protótipo web para clientes de uma loja esportiva e atendentes de balcão, com catálogo de 23 produtos: 3 calçados, 2 peças de vestuário, 3 equipamentos e 15 camisas de times. A loja virtual permite pesquisar, escolher tamanhos, adicionar ao carrinho, reservar produtos e simular uma compra com Pix. O terminal PDV compartilha carrinho e perfil e oferece simulação de crédito, débito, dinheiro e Pix. As compras recalculam descontos, pontos e cashback; cliente, carrinho e reservas ficam salvos no próprio navegador. Não há servidor, autenticação, banco de dados, pagamento real ou sincronização entre dispositivos.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Efeito indesejado que o projeto ataca</div>
+        <div contenteditable="true" data-ph="Ex.: pedidos de venda duplicados; empréstimos de livro sem controle de prazo; estoque divergente do físico." style="background:#fff;border:1px solid var(--paper-line);padding:14px 16px;min-height:50px;font-size:13.5px;outline:none">Divergência entre itens vendidos ou reservados, disponibilidade e benefícios do cliente nos canais online e de balcão. O estado compartilhado reduz retrabalho na mesma sessão, mas o protótipo ainda não evita sobrevenda, reservas vencidas ou divergência entre navegadores.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Escopo das novas abas em relação ao material de referência</div>
+        <div contenteditable="true" data-ph="Liste as funcionalidades novas que a equipe está acrescentando além do material de referência apresentado em aula." style="background:#fff;border:1px solid var(--paper-line);padding:14px 16px;min-height:60px;font-size:13.5px;outline:none">Em relação à imagem de referência do terminal PDV, o projeto também oferece loja virtual com navegação, categoria Times com 15 camisas e ilustrações das camisas, escolha de tamanhos no catálogo, gaveta de carrinho, modal de reservas e seção de fidelidade. Mapeamento: loja e tamanhos → Usabilidade; Times → Adequação funcional; carrinho, reservas e fidelidade → Adequação funcional/Confiabilidade. A referência completa da aula não foi disponibilizada; a novidade acadêmica dessas funcionalidades depende de confirmação da equipe. Os cenários T-01 a T-15 documentam sua validação.</div>
+      </div>
+    </div>
+
+    <!-- ================= TAB REQ — REQUISITOS ================= -->
+    <div class="panel" id="treq">
+      <div class="analysis-note"><strong>15 requisitos funcionais e 5 não funcionais organizados a partir das funcionalidades do projeto.</strong> A numeração é uma proposta de organização para esta prancheta, pois a especificação numerada original não foi disponibilizada. O atendimento dos requisitos deve ser confirmado pelos testes. Prioridades e metas são propostas para evolução.</div>
+      <h2>Requisitos funcionais e não funcionais</h2>
+      <p class="lead">Cada requisito deve, sempre que fizer sentido, apontar para a tela que o implementa (aba Telas). Se a tela ainda não existe, deixe "— nenhuma —" e volte aqui depois de criá-la.</p>
+
+      <table class="editable-table req-table" id="reqTable">
+        <thead><tr>
+          <th style="width:9%">ID</th>
+          <th style="width:12%">Tipo</th>
+          <th>Descrição</th>
+          <th style="width:12%">Prioridade</th>
+          <th style="width:18%">Tela vinculada</th>
+          <th style="width:6%"></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="add-row-wrap"><button class="small-btn secondary" onclick="addRequirementRow()">+ requisito</button></div>
+    </div>
+
+    <!-- ================= TAB 2 — ISO 25010 & SQA ================= -->
+    <div class="panel" id="t2">
+      <h2>ISO 25010 &amp; garantia da qualidade</h2>
+      <p class="lead">Para cada característica, explique em uma frase como o sistema da equipe atende — ou assume o risco de não atender — a ela. Não precisa preencher todas com a mesma profundidade; seja honesto sobre o que ainda é fraco.</p>
+
+      <div class="section">
+        <div class="section-title">Características ISO 25010</div>
+        <div class="iso-grid" id="isoGrid"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Pirâmide de testes aplicada ao sistema</div>
+        <div class="pyramid-wrap">
+          <div class="pyramid-notes">
+            <div class="pyr-level e2e"><strong>Testes E2E (poucos)</strong><div contenteditable="true" data-ph="Qual fluxo completo, ponta a ponta, será validado manualmente ou automatizado?">Planejado: loja → categoria Times → tamanho M → carrinho → cashback → finalizar Pix → conferir comprovante, saldo e pontos → recarregar. Segundo fluxo: reservar na loja → converter em compra → alternar para PDV → pagar → conferir contador de compras físicas. Executar em ambiente isolado com dados fictícios; testes de navegador ainda pendentes.</div></div>
+            <div class="pyr-level integ"><strong>Testes de integração</strong><div contenteditable="true" data-ph="Quais funcionalidades e informações serão testadas em conjunto?">Validar em conjunto carrinho, perfil, reservas e armazenamento no navegador: salvar e recuperar informações, converter reserva em item do carrinho, compartilhar dados entre loja e PDV e atualizar benefícios após a compra. Testar também dados salvos inválidos e indisponibilidade do armazenamento. Testes planejados, ainda não executados.</div></div>
+            <div class="pyr-level unit"><strong>Testes unitários (muitos)</strong><div contenteditable="true" data-ph="Qual lógica de negócio isolada é mais fácil e mais valiosa de testar primeiro?">Priorizar agrupamento por produto+tamanho, quantidades, desconto de R$ 5 por unidade, teto de cashback, total mínimo zero, arredondamento de pontos (total pago × 1,5, arredondado ao inteiro mais próximo) e cashback (5% com duas casas), além de bloqueio de carrinho vazio. Cada regra deve ser verificada separadamente; a preparação da versão para distribuição não substitui esses testes.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 3 — ISHIKAWA ================= -->
+    <div class="panel" id="t3">
+      <h2>Diagrama de Ishikawa (causa e efeito)</h2>
+      <p class="lead">Preencha o efeito (o problema que o sistema ataca — pode copiar da Visão Geral) e liste, em cada categoria, as possíveis causas-raiz. Não precisa preencher todas as seis; três ou quatro categorias bem pensadas valem mais que seis rasas.</p>
+
+      <div class="ishikawa-effect">Efeito: <span contenteditable="true" data-ph="ex.: divergência de estoque">Divergência entre itens vendidos ou reservados, disponibilidade e benefícios do cliente nos canais online e de balcão.</span></div>
+
+      <div class="bone-grid" id="boneGrid">
+        <div class="bone"><h4>Método</h4><ul>
+          <li contenteditable="true" data-ph="regra de negócio ausente ou ambígua">Reserva informa três dias, porém não verifica vencimento nem bloqueia estoque.</li>
+          <li contenteditable="true" data-ph="clique + para nova causa">Desconto padrão de R$ 5 por unidade é cumulativo ao preço promocional; falta política de elegibilidade documentada.</li>
+        </ul></div>
+        <div class="bone"><h4>Máquina / Sistema</h4><ul>
+          <li contenteditable="true" data-ph="bug, timeout, falha de integração">No PDV, o botão de reserva apenas apresenta uma mensagem de confirmação, sem registrar a reserva.</li>
+          <li contenteditable="true" data-ph="clique + para nova causa">Uma busca sem resultados no PDV apresenta o primeiro produto do catálogo, mesmo sem corresponder ao filtro.</li>
+        </ul></div>
+        <div class="bone"><h4>Mão de obra</h4><ul>
+          <li contenteditable="true" data-ph="erro de digitação, falta de treinamento">Hipótese operacional: atendente pode vender tamanho incorreto; PDV adiciona o primeiro tamanho sem seletor.</li>
+          <li contenteditable="true" data-ph="clique + para nova causa">Hipótese operacional: mensagens de sucesso simuladas podem ser interpretadas como pagamento ou reserva reais.</li>
+        </ul></div>
+        <div class="bone"><h4>Material / Dado</h4><ul>
+          <li contenteditable="true" data-ph="dado de entrada mal formatado">Dados salvos inválidos não são recuperados ou descartados de forma segura e podem impedir a abertura do sistema.</li>
+          <li contenteditable="true" data-ph="clique + para nova causa">Catálogo e cliente são demonstrativos; o estoque não é reduzido após a compra e os valores salvos podem ser alterados no navegador.</li>
+        </ul></div>
+        <div class="bone"><h4>Medida</h4><ul>
+          <li contenteditable="true" data-ph="falta de métrica de acompanhamento">Não há suíte de testes, cobertura, telemetria ou histórico de incidentes na documentação disponível.</li>
+          <li contenteditable="true" data-ph="clique + para nova causa">Sem histórico persistente de pedidos, não é possível reconciliar vendas e benefícios após fechar o comprovante.</li>
+        </ul></div>
+        <div class="bone"><h4>Meio ambiente</h4><ul>
+          <li contenteditable="true" data-ph="carga de uso, rede, ambiente de produção">Hipótese de ambiente: indisponibilidade da rede afeta imagens do Unsplash e fontes do Google.</li>
+          <li contenteditable="true" data-ph="clique + para nova causa">Navegadores e dispositivos mantêm estados independentes; limpeza ou bloqueio do armazenamento pode causar perda de dados.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 4 — PARETO ================= -->
+    <div class="panel" id="t4">
+      <div class="analysis-note"><strong>Base: 11 achados distintos de inspeção, em 10/09/2026; não são incidentes de produção.</strong> Regras (4): ausência de limite de estoque, baixa de estoque, expiração e validação central de tamanho. Persistência (3): leitura de dados inválidos sem recuperação, falha de gravação sem tratamento e ausência de histórico de pedidos. PDV (2): reserva apenas visual e exibição de produto que não corresponde à busca. Integrações (2): pagamento e newsletter simulados. Cada achado foi contado uma vez, em uma categoria. Acumulados: 36,36%, 63,64%, 81,82%, 100%. As três primeiras categorias cobrem 9/11 achados; priorizar também a gravidade, especialmente estoque e recuperação de dados.</div>
+      <h2>Diagrama de Pareto (80/20)</h2>
+      <p class="lead">Liste as causas de defeito/incidente que a equipe identificou e a frequência observada (ou estimada) de cada uma. O gráfico se recalcula sozinho e mostra qual pequeno grupo de causas concentra a maior parte dos problemas.</p>
+
+      <div class="data-card">
+        <div class="hint">EDITÁVEL — altere nome e frequência, clique em "+ causa" para acrescentar linha</div>
+        <table class="editable-table" id="paretoTable">
+          <thead><tr><th style="width:60%">Causa</th><th>Frequência</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="add-row-wrap">
+          <button class="small-btn secondary" onclick="addParetoRow()">+ causa</button>
+        </div>
+      </div>
+
+      <div class="data-card">
+        <svg class="chart" id="paretoChart" viewBox="0 0 640 300"></svg>
+      </div>
+    </div>
+
+    <!-- ================= TAB 5 — CEP ================= -->
+    <div class="panel" id="t5">
+      <div class="analysis-note"><strong>Medições reais coletadas em 10/09/2026.</strong> Foram 15 verificações consecutivas de consistência técnica da aplicação, todas concluídas com sucesso. A duração inclui a preparação de cada execução. A coleta ocorreu no mesmo computador, em uma única sessão, e não mede o tempo de resposta percebido pelo usuário. Os limites de média ± 2 desvios são uma aproximação didática, sem comprovação de estabilidade do processo; repetir a coleta em outras revisões e condições antes de concluir tendência.</div>
+      <h2>CEP — controle estatístico de processo</h2>
+      <p class="lead">Escolha uma métrica mensurável do sistema (tempo de resposta, taxa de rejeição, cobertura de teste por sprint...) e registre as medições ao longo do tempo. Limites de controle (LSC/LIC) e a linha central são calculados automaticamente a partir dos valores digitados.</p>
+
+      <div class="data-card">
+        <div class="hint">EDITÁVEL — nomeie a métrica e digite as medições em sequência (ex.: sprints, dias, execuções)</div>
+        <div class="field" style="padding:0 0 12px">
+          <label style="color:var(--gold-deep)">Métrica acompanhada</label>
+          <div contenteditable="true" data-ph="ex.: taxa de rejeição de operações (%)" style="color:var(--ink);border-bottom:1px dashed var(--paper-line);max-width:420px">Duração da verificação de consistência técnica da aplicação, em milissegundos (15 execuções locais consecutivas).</div>
+        </div>
+        <table class="editable-table" id="cepTable">
+          <thead><tr><th style="width:40%">Ponto (sprint / execução)</th><th>Valor medido</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="add-row-wrap">
+          <button class="small-btn secondary" onclick="addCepRow()">+ medição</button>
+        </div>
+      </div>
+
+      <div class="data-card">
+        <svg class="chart" id="cepChart" viewBox="0 0 640 300"></svg>
+        <div id="cepStats" style="font-family:var(--mono);font-size:11px;color:#8a8062;margin-top:6px"></div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 6 — TESTES ================= -->
+    <div class="panel" id="t6">
+      <div class="analysis-note"><strong>22 registros: 1 verificação executada e aprovada; 21 cenários funcionais/não funcionais pendentes.</strong> Limitações identificadas na análise são diferenciadas de resultados de testes executados. Ainda não há uma rotina automatizada de testes funcionais. T-22 verifica a preparação da versão para distribuição, sem comprovar o funcionamento de todos os fluxos.</div>
+      <h2>Registro de testes</h2>
+      <p class="lead">Cada funcionalidade nova precisa de pelo menos um teste documentado aqui. Clique nas células para editar; use o menu para marcar o resultado.</p>
+
+      <table class="log-table" id="testTable">
+        <thead><tr><th style="width:14%">ID</th><th style="width:28%">Funcionalidade</th><th style="width:16%">Tipo</th><th>Cenário testado</th><th style="width:12%">Resultado</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="add-row-wrap"><button class="small-btn secondary" onclick="addTestRow()">+ teste</button></div>
+    </div>
+
+    <!-- ================= TAB 7 — TELAS ================= -->
+    <div class="panel" id="t7">
+      <div class="analysis-note"><strong>Seis telas/seções existentes, representadas por esquemas documentais.</strong> Os diagramas resumem a organização e a finalidade das telas; não são capturas nem evidência de teste visual. Os requisitos apontam para os mesmos identificadores de tela. É possível substituir cada esquema por uma captura usando o recurso de colar imagem.</div>
+      <h2>Telas / protótipo</h2>
+      <p class="lead">Um card por tela nova. Cole a captura de tela ou wireframe no lugar da área tracejada e marque qual característica da ISO 25010 aquela tela reforça.</p>
+
+      <div class="screen-grid" id="screenGrid"><div class="screen-card" data-screen-id="scr1"><button class="screen-remove-card" title="remover tela" onclick="this.closest('.screen-card').remove(); refreshReqScreenOptions();">×</button><div class="screen-thumb" tabindex="0"><small>WIREFRAME DOCUMENTAL — NÃO É CAPTURA</small><div>BUSCA · MENU · CARRINHO</div><div>Todos | Shoes | Times | Apparel | Equipment</div><div>Produto · imagem · tamanho · preço</div><div>Add to Order | Reserve</div></div><button class="screen-remove-img" type="button">remover imagem colada</button><div class="screen-body"><input type="text" class="screen-name-input" value="Loja virtual / Catálogo"><select><option>Adequação funcional</option><option>Eficiência de desempenho</option><option>Compatibilidade</option><option selected>Usabilidade</option><option>Confiabilidade</option><option>Segurança</option><option>Manutenibilidade</option><option>Portabilidade</option></select><div contenteditable="true" data-ph="o que essa tela resolve e por quê">Página principal com navegação, destaque de produto e catálogo. Busca, filtro, 23 produtos e tamanhos. RF01–RF04; T-01–T-05.</div></div></div><div class="screen-card" data-screen-id="scr2"><button class="screen-remove-card" title="remover tela" onclick="this.closest('.screen-card').remove(); refreshReqScreenOptions();">×</button><div class="screen-thumb" tabindex="0"><small>WIREFRAME DOCUMENTAL — NÃO É CAPTURA</small><div>CARRINHO ATIVO</div><div>Produto + tamanho | − quantidade +</div><div>Subtotal · desconto · cashback · total</div><div>Finalizar via Pix</div></div><button class="screen-remove-img" type="button">remover imagem colada</button><div class="screen-body"><input type="text" class="screen-name-input" value="Carrinho / Checkout online"><select><option selected>Adequação funcional</option><option>Eficiência de desempenho</option><option>Compatibilidade</option><option>Usabilidade</option><option>Confiabilidade</option><option>Segurança</option><option>Manutenibilidade</option><option>Portabilidade</option></select><div contenteditable="true" data-ph="o que essa tela resolve e por quê">Painel lateral do carrinho. Quantidades, descontos, resgate e checkout Pix simulado. RF04–RF08/RF15; T-05–T-09/T-17.</div></div></div><div class="screen-card" data-screen-id="scr3"><button class="screen-remove-card" title="remover tela" onclick="this.closest('.screen-card').remove(); refreshReqScreenOptions();">×</button><div class="screen-thumb" tabindex="0"><small>WIREFRAME DOCUMENTAL — NÃO É CAPTURA</small><div>TERMINAL PDV · VOLTAR</div><div>Busca e categoria | Carrinho | Cliente</div><div>Produto | Totais | Pontos e saldo</div><div>Crédito | Débito | Dinheiro | Pix</div></div><button class="screen-remove-img" type="button">remover imagem colada</button><div class="screen-body"><input type="text" class="screen-name-input" value="Terminal PDV / Balcão"><select><option selected>Adequação funcional</option><option>Eficiência de desempenho</option><option>Compatibilidade</option><option>Usabilidade</option><option>Confiabilidade</option><option>Segurança</option><option>Manutenibilidade</option><option>Portabilidade</option></select><div contenteditable="true" data-ph="o que essa tela resolve e por quê">Tela de atendimento no balcão. Catálogo, carrinho e perfil em três colunas; quatro meios simulados. A reserva apenas exibe confirmação e a busca pode mostrar produto sem correspondência. RF08/RF14; T-03/T-09/T-15/T-16.</div></div></div><div class="screen-card" data-screen-id="scr4"><button class="screen-remove-card" title="remover tela" onclick="this.closest('.screen-card').remove(); refreshReqScreenOptions();">×</button><div class="screen-thumb" tabindex="0"><small>WIREFRAME DOCUMENTAL — NÃO É CAPTURA</small><div>MINHAS RESERVAS NA LOJA</div><div>Produto · tamanho · data</div><div>Válido por 3 dias (informativo)</div><div>Comprar | Liberar | Fechar</div></div><button class="screen-remove-img" type="button">remover imagem colada</button><div class="screen-body"><input type="text" class="screen-name-input" value="Minhas reservas"><select><option>Adequação funcional</option><option>Eficiência de desempenho</option><option>Compatibilidade</option><option>Usabilidade</option><option selected>Confiabilidade</option><option>Segurança</option><option>Manutenibilidade</option><option>Portabilidade</option></select><div contenteditable="true" data-ph="o que essa tela resolve e por quê">Janela de gerenciamento de reservas. Lista reservas criadas na loja, data, tamanho e prazo declarado; permite liberar ou comprar. Não há expiração automática. RF12/RF13; T-13/T-14/T-16.</div></div></div><div class="screen-card" data-screen-id="scr5"><button class="screen-remove-card" title="remover tela" onclick="this.closest('.screen-card').remove(); refreshReqScreenOptions();">×</button><div class="screen-thumb" tabindex="0"><small>WIREFRAME DOCUMENTAL — NÃO É CAPTURA</small><div>PEDIDO REALIZADO</div><div>Identificador · data · cliente</div><div>Itens · descontos · valor pago</div><div>Pontos e cashback | Imprimir</div></div><button class="screen-remove-img" type="button">remover imagem colada</button><div class="screen-body"><input type="text" class="screen-name-input" value="Comprovante de pedido"><select><option selected>Adequação funcional</option><option>Eficiência de desempenho</option><option>Compatibilidade</option><option>Usabilidade</option><option>Confiabilidade</option><option>Segurança</option><option>Manutenibilidade</option><option>Portabilidade</option></select><div contenteditable="true" data-ph="o que essa tela resolve e por quê">Janela de confirmação da compra. Comprovante simulado com itens, totais, pagamento e benefícios; permite solicitar impressão pelo navegador. Não persiste histórico e não é documento fiscal. RF09; T-10.</div></div></div><div class="screen-card" data-screen-id="scr6"><button class="screen-remove-card" title="remover tela" onclick="this.closest('.screen-card').remove(); refreshReqScreenOptions();">×</button><div class="screen-thumb" tabindex="0"><small>WIREFRAME DOCUMENTAL — NÃO É CAPTURA</small><div>CLUBE HOOD SPORTS</div><div>João da Silva · perfil fictício</div><div>Compras físicas/online · pontos · saldo</div><div>Ativar cashback</div></div><button class="screen-remove-img" type="button">remover imagem colada</button><div class="screen-body"><input type="text" class="screen-name-input" value="Clube de fidelidade"><select><option selected>Adequação funcional</option><option>Eficiência de desempenho</option><option>Compatibilidade</option><option>Usabilidade</option><option>Confiabilidade</option><option>Segurança</option><option>Manutenibilidade</option><option>Portabilidade</option></select><div contenteditable="true" data-ph="o que essa tela resolve e por quê">Seção de fidelidade e perfil no balcão. Exibe cliente demonstrativo, compras online/físicas, pontos e saldo; permite ativar cashback. RF07/RF10/RF11; T-08/T-11/T-12.</div></div></div></div>
+      <div class="add-row-wrap"><button class="small-btn secondary" onclick="addScreenCard()">+ tela</button></div>
+    </div>
+
+    <!-- ================= TAB 8 — ENTREGA ================= -->
+    <div class="panel" id="t8">
+      <div class="analysis-note"><strong>Documentação preenchida; prontidão de produção não aprovada.</strong> Mapeamento de qualidade, cenários, seis categorias de Ishikawa, Pareto de achados e 15 medições reais estão documentados. O primeiro item permanece desmarcado porque a referência completa da aula não foi fornecida. “Teste documentado” indica existência de cenários, não sua execução. Integrantes da equipe e novidade em relação à aula dependem de informações da equipe. Antes de uso real: corrigir reservas e busca do PDV, validar estoque/tamanhos, tratar armazenamento, adicionar serviço central de dados, autenticação, pagamento real e histórico e executar os cenários pendentes.</div>
+      <h2>Checklist de entrega</h2>
+      <p class="lead">Confirme os itens antes de considerar o trabalho pronto para apresentação.</p>
+      <ul class="checklist" id="checklist"></ul>
+    </div>
+
+    <div class="save-bar">
+      <div class="txt">Este arquivo não salva sozinho. Ao terminar a edição de hoje, clique em "salvar" — ele baixa uma nova cópia do HTML com tudo preenchido até agora. Substituam o arquivo antigo por essa cópia da próxima vez.</div>
+      <button class="save-btn" onclick="saveHtmlCopy()">💾 Salvar versão atual (baixar .html)</button>
+    </div>
+
+    <footer class="sheet-footer">
+      <span>PRANCHETA DO PROJETO — QUALIDADE DE SOFTWARE</span>
+      <span id="footRev">rev. automática</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* ---------- TABS ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------- ISO 25010 GRID ---------- */
+const isoData = [
+  ["Adequação funcional","O sistema faz o que promete, de forma completa e correta."],
+  ["Eficiência de desempenho","Tempo de resposta e uso de recursos sob carga esperada."],
+  ["Compatibilidade","Convive bem com outros sistemas, formatos e ambientes."],
+  ["Usabilidade","Um usuário do domínio consegue operar sem treinamento pesado."],
+  ["Confiabilidade","O sistema falha de forma graciosa, sem perder dados."],
+  ["Segurança","Dados sensíveis protegidos; controle de acesso adequado."],
+  ["Manutenibilidade","É fácil manter, corrigir e ampliar o sistema."],
+  ["Portabilidade","Roda em outro ambiente sem retrabalho relevante."]
+];
+const isoAnswers = ["Atendimento parcial: catálogo, carrinho e fidelidade estão disponíveis, mas pagamentos são simulados; a reserva no PDV apenas apresenta confirmação e não há controle efetivo de estoque.", "O catálogo possui 23 itens e suas imagens são carregadas conforme a navegação. Ainda não foram realizados ensaios de carga ou medições de resposta da interface; o CEP acompanha a duração da verificação técnica da aplicação.", "Loja e PDV compartilham carrinho e perfil na mesma sessão. Não há integração com sistemas externos de gestão ou pagamento. Recursos externos dependem da rede, e a compatibilidade entre navegadores ainda precisa ser testada.", "A interface se adapta ao tamanho da tela e oferece seleção de tamanhos na loja, mensagens de confirmação e indicação de ausência de resultados. Há mistura de português e inglês; falta seleção de tamanho no PDV e avaliação da navegação por teclado nas janelas.", "Carrinho, cliente e reservas são salvos no navegador, mas não há recuperação de dados inválidos ou falhas de gravação. A ausência de histórico de pedidos, expiração de reservas e sincronização entre dispositivos limita a consistência.", "Não há autenticação, autorização ou validação central das operações. Saldos e preços podem ser alterados no navegador; a indicação visual de ambiente seguro não comprova proteção. O protótipo utiliza dados fictícios.", "O sistema organiza separadamente suas áreas de atendimento, compra e fidelidade, favorecendo a manutenção. A preparação da versão para distribuição foi aprovada; faltam testes automatizados e maior padronização das regras compartilhadas.", "A aplicação pode ser disponibilizada para acesso por navegador e sua preparação foi validada em macOS. Depende do armazenamento do navegador e de recursos externos; o funcionamento em outros sistemas e navegadores ainda não foi verificado."];
+const isoGrid = document.getElementById('isoGrid');
+isoData.forEach(([name,desc], i)=>{
+  if (isoGrid.children[i]) return;
+  const card = document.createElement('div');
+  card.className='iso-card';
+  card.innerHTML = `<h3>${name}</h3><p>${desc}</p><div contenteditable="true" data-ph="Como o projeto da equipe atende (ou não) a esta característica?">${isoAnswers[i]}</div>`;
+  isoGrid.appendChild(card);
+});
+
+/* ---------- PARETO ---------- */
+let paretoData = [
+  {
+    "causa": "Regras de domínio",
+    "freq": 4
+  },
+  {
+    "causa": "Persistência",
+    "freq": 3
+  },
+  {
+    "causa": "Fluxos do PDV",
+    "freq": 2
+  },
+  {
+    "causa": "Integrações ausentes",
+    "freq": 2
+  }
+];
+function renderParetoTable(){
+  const tbody = document.querySelector('#paretoTable tbody');
+  tbody.innerHTML='';
+  paretoData.forEach((row,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td><input type="text" value="${row.causa}" onchange="paretoData[${i}].causa=this.value; renderParetoChart();"></td>
+      <td><input type="number" min="0" value="${row.freq}" onchange="paretoData[${i}].freq=parseFloat(this.value)||0; renderParetoChart();"></td>
+      <td><button class="small-btn secondary" onclick="paretoData.splice(${i},1); renderParetoTable(); renderParetoChart();">remover</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function addParetoRow(){
+  paretoData.push({causa:"Nova causa", freq:1});
+  renderParetoTable();
+  renderParetoChart();
+}
+function renderParetoChart(){
+  const svg = document.getElementById('paretoChart');
+  const sorted = [...paretoData].sort((a,b)=>b.freq-a.freq);
+  const total = sorted.reduce((s,r)=>s+r.freq,0) || 1;
+  let cum=0;
+  const W=640,H=300,padL=40,padR=40,padT=20,padB=70;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const barW = plotW/sorted.length*0.6;
+  const gap = plotW/sorted.length;
+  const maxFreq = Math.max(...sorted.map(r=>r.freq),1);
+  let bars='', line='', labels='', dots='';
+  sorted.forEach((row,i)=>{
+    const x = padL + i*gap + (gap-barW)/2;
+    const h = (row.freq/maxFreq)*plotH;
+    const y = padT+plotH-h;
+    bars += `<rect x="${x}" y="${y}" width="${barW}" height="${h}" fill="#0F2A44"></rect>`;
+    bars += `<text x="${x+barW/2}" y="${y-6}" text-anchor="middle" font-size="10.5" fill="#5A5138" font-family="Segoe UI">${row.freq}</text>`;
+    cum += row.freq;
+    const pct = cum/total*100;
+    const lx = padL + i*gap + gap/2;
+    const ly = padT + plotH - (pct/100)*plotH;
+    line += `${lx},${ly} `;
+    dots += `<circle cx="${lx}" cy="${ly}" r="3" fill="#C79A3C"></circle>`;
+    const words = row.causa.length>14 ? row.causa.slice(0,13)+"…" : row.causa;
+    labels += `<text x="${lx}" y="${H-padB+16}" text-anchor="middle" font-size="10" fill="#5A5138" font-family='Segoe UI' transform="rotate(0 ${lx} ${H-padB+16})">${words}</text>`;
+  });
+  const axis80 = padT + plotH - 0.8*plotH;
+  svg.innerHTML = `
+    <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT+plotH}" stroke="#c9c2ab"/>
+    <line x1="${padL}" y1="${padT+plotH}" x2="${W-padR}" y2="${padT+plotH}" stroke="#c9c2ab"/>
+    <line x1="${padL}" y1="${axis80}" x2="${W-padR}" y2="${axis80}" stroke="#B14738" stroke-dasharray="4 3"/>
+    <text x="${W-padR}" y="${axis80-4}" text-anchor="end" font-size="10" fill="#B14738" font-family="Courier New">80%</text>
+    ${bars}
+    <polyline points="${line}" fill="none" stroke="#C79A3C" stroke-width="2"/>
+    ${dots}
+    ${labels}
+  `;
+}
+function initParetoData(){
+  const tbody = document.querySelector('#paretoTable tbody');
+  if(tbody.children.length>0){
+    paretoData = Array.from(tbody.children).map(tr=>({
+      causa: tr.querySelector('input[type=text]').value,
+      freq: parseFloat(tr.querySelector('input[type=number]').value)||0
+    }));
+  }
+  renderParetoTable();
+  renderParetoChart();
+}
+initParetoData();
+
+/* ---------- CEP ---------- */
+let cepData = [
+  {
+    "label": "E01",
+    "value": 742.62
+  },
+  {
+    "label": "E02",
+    "value": 644.21
+  },
+  {
+    "label": "E03",
+    "value": 637.63
+  },
+  {
+    "label": "E04",
+    "value": 605.71
+  },
+  {
+    "label": "E05",
+    "value": 603.02
+  },
+  {
+    "label": "E06",
+    "value": 603.58
+  },
+  {
+    "label": "E07",
+    "value": 601.77
+  },
+  {
+    "label": "E08",
+    "value": 613.97
+  },
+  {
+    "label": "E09",
+    "value": 594.33
+  },
+  {
+    "label": "E10",
+    "value": 609.69
+  },
+  {
+    "label": "E11",
+    "value": 603.89
+  },
+  {
+    "label": "E12",
+    "value": 592.74
+  },
+  {
+    "label": "E13",
+    "value": 590.52
+  },
+  {
+    "label": "E14",
+    "value": 609.15
+  },
+  {
+    "label": "E15",
+    "value": 604.02
+  }
+];
+function renderCepTable(){
+  const tbody = document.querySelector('#cepTable tbody');
+  tbody.innerHTML='';
+  cepData.forEach((row,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td><input type="text" value="${row.label}" onchange="cepData[${i}].label=this.value; renderCepChart();"></td>
+      <td><input type="number" value="${row.value}" onchange="cepData[${i}].value=parseFloat(this.value)||0; renderCepChart();"></td>
+      <td><button class="small-btn secondary" onclick="cepData.splice(${i},1); renderCepTable(); renderCepChart();">remover</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function addCepRow(){
+  cepData.push({label:"Novo ponto", value:0});
+  renderCepTable();
+  renderCepChart();
+}
+function renderCepChart(){
+  const svg = document.getElementById('cepChart');
+  const stats = document.getElementById('cepStats');
+  const vals = cepData.map(r=>r.value);
+  const n = vals.length || 1;
+  const mean = vals.reduce((s,v)=>s+v,0)/n;
+  const variance = vals.reduce((s,v)=>s+Math.pow(v-mean,2),0)/n;
+  const sd = Math.sqrt(variance);
+  const ucl = mean+2*sd, lcl = Math.max(mean-2*sd,0);
+  const W=640,H=300,padL=44,padR=20,padT=20,padB=50;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const maxV = Math.max(ucl, ...vals, 1)*1.15;
+  const minV = Math.min(lcl, ...vals, 0)*1.0;
+  const range = (maxV-minV)||1;
+  const xStep = cepData.length>1 ? plotW/(cepData.length-1) : plotW;
+  function yOf(v){ return padT + plotH - ((v-minV)/range)*plotH; }
+  let pts='', dots='', labels='';
+  cepData.forEach((row,i)=>{
+    const x = padL + i*xStep;
+    const y = yOf(row.value);
+    pts += `${x},${y} `;
+    dots += `<circle cx="${x}" cy="${y}" r="3.5" fill="#0F2A44"></circle>`;
+    labels += `<text x="${x}" y="${H-padB+16}" text-anchor="middle" font-size="10" fill="#5A5138" font-family="Segoe UI">${row.label}</text>`;
+  });
+  const yMean=yOf(mean), yUcl=yOf(ucl), yLcl=yOf(lcl);
+  svg.innerHTML = `
+    <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT+plotH}" stroke="#c9c2ab"/>
+    <line x1="${padL}" y1="${padT+plotH}" x2="${W-padR}" y2="${padT+plotH}" stroke="#c9c2ab"/>
+    <line x1="${padL}" y1="${yUcl}" x2="${W-padR}" y2="${yUcl}" stroke="#B14738" stroke-dasharray="4 3"/>
+    <text x="${W-padR}" y="${yUcl-4}" text-anchor="end" font-size="10" fill="#B14738" font-family="Courier New">LSC ${ucl.toFixed(2)}</text>
+    <line x1="${padL}" y1="${yLcl}" x2="${W-padR}" y2="${yLcl}" stroke="#B14738" stroke-dasharray="4 3"/>
+    <text x="${W-padR}" y="${yLcl+12}" text-anchor="end" font-size="10" fill="#B14738" font-family="Courier New">LIC ${lcl.toFixed(2)}</text>
+    <line x1="${padL}" y1="${yMean}" x2="${W-padR}" y2="${yMean}" stroke="#3F7D5C" stroke-dasharray="2 3"/>
+    <text x="${W-padR}" y="${yMean-4}" text-anchor="end" font-size="10" fill="#3F7D5C" font-family="Courier New">LC ${mean.toFixed(2)}</text>
+    <polyline points="${pts}" fill="none" stroke="#C79A3C" stroke-width="2"/>
+    ${dots}
+    ${labels}
+  `;
+  stats.textContent = `média = ${mean.toFixed(2)}  •  desvio padrão = ${sd.toFixed(2)}  •  LSC/LIC calculados como média ± 2 desvios padrão (aproximação didática)`;
+}
+function initCepData(){
+  const tbody = document.querySelector('#cepTable tbody');
+  if(tbody.children.length>0){
+    cepData = Array.from(tbody.children).map(tr=>({
+      label: tr.querySelector('input[type=text]').value,
+      value: parseFloat(tr.querySelector('input[type=number]').value)||0
+    }));
+  }
+  renderCepTable();
+  renderCepChart();
+}
+initCepData();
+
+function escapeHtml(value){ return String(value ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+/* ---------- TESTES ---------- */
+let testRows = [
+  {
+    "id": "T-01",
+    "func": "Catálogo — RF01",
+    "tipo": "E2E",
+    "cenario": "Abrir loja com estado limpo: esperar 23 produtos (3 shoes, 2 apparel, 3 equipment, 15 times), preços e imagens. Inspeção dos dados confirma contagens; renderização e rede ainda não testadas.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-02",
+    "func": "Categorias e busca — RF02",
+    "tipo": "E2E",
+    "cenario": "Selecionar Times: esperar 15 itens. Buscar Flamengo: esperar 1; buscar zzz-sem-produto: esperar estado vazio. Limpar busca preserva categoria atual. Execução pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-03",
+    "func": "Busca vazia no PDV — RF02",
+    "tipo": "E2E",
+    "cenario": "Buscar zzz-sem-produto: esperado nenhum item comprável. A análise identificou que o primeiro produto do catálogo é exibido mesmo sem corresponder à pesquisa. Defeito identificado por inspeção, reprodução de navegador pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-04",
+    "func": "Tamanhos — RF03",
+    "tipo": "E2E",
+    "cenario": "Na loja adicionar camisa M e G: esperar linhas distintas. No PDV esperar escolha explícita; atualmente a inclusão usa automaticamente o primeiro tamanho disponível. Lacuna identificada por inspeção; execução pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-05",
+    "func": "Agrupamento — RF04",
+    "tipo": "Unitário",
+    "cenario": "Partir de carrinho vazio; adicionar mesmo produto M duas vezes e G uma vez: esperar M×2 e G×1. Cenário planejado, ainda sem execução.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-06",
+    "func": "Quantidade e remoção — RF05",
+    "tipo": "Unitário",
+    "cenario": "Alterar quantidade 1→2→1→0: esperar recálculo e remoção em zero; remover e limpar devem deixar carrinho vazio. Testar adicionalmente quantidade acima do estoque disponível, hoje sem bloqueio. Pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-07",
+    "func": "Descontos — RF06",
+    "tipo": "Unitário",
+    "cenario": "Estado inicial: 269,90 + 2×289,90 = R$ 849,70; desconto 3×5 = R$ 15,00; total sem cashback R$ 834,70. Esperado total mínimo de zero se desconto superar subtotal. Valores calculados para o cenário; regra ainda não testada isoladamente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-08",
+    "func": "Resgate — RF07",
+    "tipo": "Unitário",
+    "cenario": "No carrinho inicial e saldo 62,50: ativar cashback → abater R$ 62,50, total R$ 772,20; desativar → R$ 834,70. Se saldo superar total, abater somente total. Pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-09",
+    "func": "Checkout — RF08",
+    "tipo": "Integração",
+    "cenario": "Finalizar carrinho inicial com cashback via Pix: esperar pedido de R$ 772,20, carrinho vazio e cashback desativado; carrinho vazio não gera pedido. Repetir em conjuntos independentes de dados de teste para quatro métodos do PDV. Simulação local; pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-10",
+    "func": "Comprovante — RF09",
+    "tipo": "E2E",
+    "cenario": "Após checkout verificar itens, tamanho, quantidades, pagamento e total; clicar Imprimir e conferir pré-visualização. Fechar/recarregar demonstra ausência de histórico. Não foi testada impressão; pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-11",
+    "func": "Benefícios — RF10",
+    "tipo": "Unitário",
+    "cenario": "Total R$ 772,20: esperar 1.158 pontos ganhos e R$ 38,61 de cashback. Perfil inicial de 2.050 pts e R$ 62,50, resgatando tudo: esperar 3.208 pts e R$ 38,61. Pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-12",
+    "func": "Perfil e canal — RF11",
+    "tipo": "Integração",
+    "cenario": "Compra online incrementa somente o contador de compras online (5→6); em um teste independente no PDV, incrementa somente o contador de compras físicas (10→11). Conferir fidelidade e recarga. Pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-13",
+    "func": "Reserva na loja — RF12",
+    "tipo": "Integração",
+    "cenario": "Reservar camisa M: esperar produto, tamanho, data e prazo 3 na lista de reservas e nos dados salvos no navegador; reserva com data antiga deveria expirar. Não há cancelamento automático das reservas vencidas; teste de execução pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-14",
+    "func": "Converter/cancelar — RF13",
+    "tipo": "Integração",
+    "cenario": "Reservar e clicar Comprar: esperar item no carrinho e retirada da reserva; Liberar remove sem adicionar. Conferir que notificação atual usa texto de cancelamento também na conversão. Pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-15",
+    "func": "Alternância — RF14",
+    "tipo": "E2E",
+    "cenario": "Adicionar camisa na loja, abrir PDV e voltar: carrinho e perfil permanecem; filtros de cada modo têm estado próprio. Fluxo completo pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-16",
+    "func": "Reserva no PDV — RF12",
+    "tipo": "E2E",
+    "cenario": "Clicar Reserve no balcão: esperado criar registro em reservas. A ação apenas apresenta uma mensagem de confirmação, sem registrar a reserva; limitação identificada por análise, sem teste de navegador executado.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-17",
+    "func": "Persistência válida — RF15",
+    "tipo": "Integração",
+    "cenario": "Alterar carrinho, reservar e finalizar compra em cenários independentes; recarregar para conferir a recuperação do carrinho, do perfil e das reservas. Pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-18",
+    "func": "Armazenamento inválido — RF15/RNF03",
+    "tipo": "Integração",
+    "cenario": "Em ambiente de teste descartável, simular dados salvos corrompidos e reabrir o sistema; esperar recuperação segura e mensagem explicativa. Simular também indisponibilidade do armazenamento. Falta tratamento dessas situações; execução pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-19",
+    "func": "Responsividade e acesso — RNF01",
+    "tipo": "E2E",
+    "cenario": "Validar 360/768/1440 px, abrir menus, drawer e modais, navegar com Tab/Shift+Tab/Escape e verificar nomes de botões por leitor de tela. Sem execução, não há conformidade comprovada.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-20",
+    "func": "Desempenho — RNF02",
+    "tipo": "E2E",
+    "cenario": "Medir intervalo entre entrada de busca e atualização visual em navegador/dispositivo definido, meta proposta ≤200 ms. Não confundir com tempo de verificação técnica coletado no CEP. Pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-21",
+    "func": "Controle de acesso — RNF04",
+    "tipo": "Integração",
+    "cenario": "Esperado impedir alteração não autorizada de saldo/preços antes de uma venda real. Não há autenticação nem serviço central de validação: requisito futuro, teste depende de implementação e está pendente.",
+    "res": "pendente"
+  },
+  {
+    "id": "T-22",
+    "func": "Preparação da versão — RNF05",
+    "tipo": "Integração",
+    "cenario": "Executado em 10/09/2026: a preparação da versão para distribuição foi concluída com sucesso. Essa verificação técnica não substitui testes das funcionalidades. As 15 verificações de consistência técnica registradas no CEP também foram concluídas com sucesso.",
+    "res": "aprovado"
+  }
+];
+function resTag(res){
+  const map = {aprovado:"pass", pendente:"warn", reprovado:"fail"};
+  return `<span class="tag ${map[res]||'warn'}">${res}</span>`;
+}
+function renderTestTable(){
+  const tbody = document.querySelector('#testTable tbody');
+  tbody.innerHTML='';
+  testRows.forEach((row,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td contenteditable="true" data-ph="T-0${i+1}" oninput="testRows[${i}].id=this.textContent">${row.id}</td>
+      <td contenteditable="true" data-ph="qual funcionalidade" oninput="testRows[${i}].func=this.textContent">${escapeHtml(row.func)}</td>
+      <td>
+        <select class="tagselect" onchange="testRows[${i}].tipo=this.value">
+          <option ${row.tipo==='Unitário'?'selected':''}>Unitário</option>
+          <option ${row.tipo==='Integração'?'selected':''}>Integração</option>
+          <option ${row.tipo==='E2E'?'selected':''}>E2E</option>
+        </select>
+      </td>
+      <td contenteditable="true" data-ph="descreva o cenário e o resultado esperado" oninput="testRows[${i}].cenario=this.textContent">${escapeHtml(row.cenario)}</td>
+      <td>
+        <select class="tagselect" onchange="testRows[${i}].res=this.value; renderTestTable();">
+          <option value="pendente" ${row.res==='pendente'?'selected':''}>pendente</option>
+          <option value="aprovado" ${row.res==='aprovado'?'selected':''}>aprovado</option>
+          <option value="reprovado" ${row.res==='reprovado'?'selected':''}>reprovado</option>
+        </select>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+function addTestRow(){
+  testRows.push({id:`T-0${testRows.length+1}`, func:"", tipo:"Unitário", cenario:"", res:"pendente"});
+  renderTestTable();
+}
+function initTestRows(){
+  const tbody = document.querySelector('#testTable tbody');
+  if(tbody.children.length>0){
+    testRows = Array.from(tbody.children).map(tr=>{
+      const tds = tr.children;
+      return {
+        id: tds[0].textContent,
+        func: tds[1].textContent,
+        tipo: tds[2].querySelector('select').value,
+        cenario: tds[3].textContent,
+        res: tds[4].querySelector('select').value
+      };
+    });
+  }
+  renderTestTable();
+}
+initTestRows();
+
+/* ---------- TELAS ---------- */
+const screenGrid = document.getElementById('screenGrid');
+let screenIdCounter = 0;
+
+function wireScreenThumbPaste(thumbEl, removeBtn){
+  thumbEl.addEventListener('paste', e=>{
+    const items = (e.clipboardData || window.clipboardData).items;
+    if(!items) return;
+    for(const item of items){
+      if(item.type && item.type.indexOf('image')===0){
+        const blob = item.getAsFile();
+        const reader = new FileReader();
+        reader.onload = ev=>{
+          thumbEl.style.backgroundImage = `url(${ev.target.result})`;
+          thumbEl.classList.add('has-image');
+        };
+        reader.readAsDataURL(blob);
+        e.preventDefault();
+        break;
+      }
+    }
+  });
+  thumbEl.addEventListener('click', ()=>thumbEl.focus());
+  removeBtn.addEventListener('click', ()=>{
+    thumbEl.style.backgroundImage='';
+    thumbEl.classList.remove('has-image');
+  });
+}
+
+function addScreenCard(name){
+  screenIdCounter++;
+  const id = 'scr'+screenIdCounter;
+  const card = document.createElement('div');
+  card.className='screen-card';
+  card.dataset.screenId = id;
+  card.innerHTML = `
+    <button class="screen-remove-card" title="remover tela" onclick="this.closest('.screen-card').remove(); refreshReqScreenOptions();">×</button>
+    <div class="screen-thumb" tabindex="0">clique aqui e cole (Ctrl+V)<br>a captura de tela ou wireframe</div>
+    <button class="screen-remove-img" type="button">remover imagem colada</button>
+    <div class="screen-body">
+      <input type="text" class="screen-name-input" value="${name || ('Tela '+screenIdCounter)}" placeholder="Nome da tela" oninput="refreshReqScreenOptions()">
+      <select>
+        <option>Adequação funcional</option>
+        <option>Eficiência de desempenho</option>
+        <option>Compatibilidade</option>
+        <option>Usabilidade</option>
+        <option>Confiabilidade</option>
+        <option>Segurança</option>
+        <option>Manutenibilidade</option>
+        <option>Portabilidade</option>
+      </select>
+      <div contenteditable="true" data-ph="o que essa tela resolve e por quê"></div>
+    </div>`;
+  screenGrid.appendChild(card);
+  const thumb = card.querySelector('.screen-thumb');
+  const rmImg = card.querySelector('.screen-remove-img');
+  wireScreenThumbPaste(thumb, rmImg);
+  return card;
+}
+
+function collectScreensFromDOM(){
+  return Array.from(screenGrid.querySelectorAll('.screen-card')).map(card=>({
+    id: card.dataset.screenId,
+    name: card.querySelector('.screen-name-input').value || 'Tela sem nome'
+  }));
+}
+
+function initScreens(){
+  const existingCards = screenGrid.querySelectorAll('.screen-card');
+  if(existingCards.length>0){
+    // rehidrata a partir do HTML salvo: reata os eventos de colar/remover
+    let maxId=0;
+    existingCards.forEach(card=>{
+      const num = parseInt((card.dataset.screenId||'').replace('scr',''))||0;
+      if(num>maxId) maxId=num;
+      const thumb = card.querySelector('.screen-thumb');
+      const rmImg = card.querySelector('.screen-remove-img');
+      const nameInput = card.querySelector('.screen-name-input');
+      thumb.setAttribute('tabindex','0');
+      wireScreenThumbPaste(thumb, rmImg);
+      nameInput.addEventListener('input', refreshReqScreenOptions);
+    });
+    screenIdCounter = maxId;
+  } else {
+    addScreenCard(); addScreenCard(); addScreenCard();
+  }
+}
+initScreens();
+
+/* ---------- CHECKLIST ---------- */
+const checklistItems = [
+  ["Nova aba/funcionalidade","Pelo menos 1 funcionalidade nova além do material de referência."],
+  ["Mapeamento ISO 25010","Cada funcionalidade nova ligada a uma característica da norma."],
+  ["Teste documentado","Pelo menos 1 teste por funcionalidade nova, na aba Testes."],
+  ["Diagrama de Ishikawa","Efeito indesejado com causas em ao menos 3 categorias."],
+  ["Diagrama de Pareto","Incidentes/causas registrados e priorizados por frequência."],
+  ["Métrica de processo (CEP)","Pelo menos 15-20 medições de uma métrica ao longo do tempo."]
+];
+const ul = document.getElementById('checklist');
+checklistItems.forEach(([t,d], i)=>{
+  if (ul.children[i]) return;
+  const li=document.createElement('li');
+  li.innerHTML = `<input type="checkbox" ${i>0 ? "checked" : ""}><div class="item-body"><strong>${t}</strong><span>${d}</span></div>`;
+  ul.appendChild(li);
+});
+
+/* ---------- REQUISITOS ---------- */
+let reqData = [
+  {
+    "id": "RF01",
+    "tipo": "Funcional",
+    "desc": "Exibir catálogo com nome, variante, imagem, preços e categoria dos 23 produtos. Disponível com dados demonstrativos; T-01.",
+    "prioridade": "Alta",
+    "tela": "scr1"
+  },
+  {
+    "id": "RF02",
+    "tipo": "Funcional",
+    "desc": "Filtrar categorias Todos, Shoes, Apparel, Equipment e Times; pesquisar nome, variante e descrição na loja. Implementado; PDV pesquisa apenas nome/variante e exibe um produto indevido quando não há resultados. T-02/T-03.",
+    "prioridade": "Alta",
+    "tela": "scr1"
+  },
+  {
+    "id": "RF03",
+    "tipo": "Funcional",
+    "desc": "Permitir escolher um tamanho disponível antes de adicionar ou reservar. Disponível nos cartões do catálogo; PDV usa o primeiro tamanho e o produto em destaque na página inicial usa tamanho 40 fixo. Validação central ausente; T-04.",
+    "prioridade": "Alta",
+    "tela": "scr1"
+  },
+  {
+    "id": "RF04",
+    "tipo": "Funcional",
+    "desc": "Adicionar produto ao carrinho agrupando produto+tamanho e incrementando a quantidade. Disponível; sem limite de estoque. T-05.",
+    "prioridade": "Alta",
+    "tela": "scr2"
+  },
+  {
+    "id": "RF05",
+    "tipo": "Funcional",
+    "desc": "Aumentar/diminuir quantidade, remover item e esvaziar carrinho; quantidade menor ou igual a zero remove item. Implementado; sem validação de inteiro ou limite de estoque nas operações do carrinho. T-06.",
+    "prioridade": "Alta",
+    "tela": "scr2"
+  },
+  {
+    "id": "RF06",
+    "tipo": "Funcional",
+    "desc": "Calcular subtotal como preço × quantidade e desconto padrão adicional de R$ 5 por unidade, sobre preços já promocionais; total nunca negativo. Implementado; elegibilidade comercial não configurável. T-07.",
+    "prioridade": "Alta",
+    "tela": "scr2"
+  },
+  {
+    "id": "RF07",
+    "tipo": "Funcional",
+    "desc": "Ativar/desativar cashback e limitar abatimento ao menor valor entre saldo disponível e total após desconto. Implementado localmente; sem validação no servidor. T-08.",
+    "prioridade": "Alta",
+    "tela": "scr2"
+  },
+  {
+    "id": "RF08",
+    "tipo": "Funcional",
+    "desc": "Finalizar pedido não vazio: Pix na loja e crédito, débito, dinheiro ou Pix no PDV, limpar carrinho e desativar cashback. Implementado somente como simulação; não cobra, não gera QR real nem emite documento fiscal. T-09.",
+    "prioridade": "Alta",
+    "tela": "scr3"
+  },
+  {
+    "id": "RF09",
+    "tipo": "Funcional",
+    "desc": "Exibir comprovante com identificador, cliente, data, itens, tamanhos, descontos, cashback, total e pagamento; solicitar impressão pelo navegador. Implementado; sem histórico persistente e sem layout específico para imprimir apenas o cupom. T-10.",
+    "prioridade": "Média",
+    "tela": "scr5"
+  },
+  {
+    "id": "RF10",
+    "tipo": "Funcional",
+    "desc": "Após checkout, somar o total pago × 1,5, arredondado ao inteiro mais próximo, em pontos e 5% de cashback arredondado a centavos; descontar cashback resgatado. Implementado no perfil local. T-11.",
+    "prioridade": "Alta",
+    "tela": "scr6"
+  },
+  {
+    "id": "RF11",
+    "tipo": "Funcional",
+    "desc": "Exibir perfil fictício, saldo, pontos e contadores; incrementar compra online ou física conforme modo ativo. Implementado; não há cadastro ou autenticação de clientes. T-12.",
+    "prioridade": "Média",
+    "tela": "scr6"
+  },
+  {
+    "id": "RF12",
+    "tipo": "Funcional",
+    "desc": "Reservar produto+tamanho e listar data e prazo de três dias. Parcial: loja persiste, mas não expira nem bloqueia estoque; Reserve do PDV só exibe confirmação. T-13/T-16.",
+    "prioridade": "Alta",
+    "tela": "scr4"
+  },
+  {
+    "id": "RF13",
+    "tipo": "Funcional",
+    "desc": "Cancelar reserva ou convertê-la em item do carrinho, removendo a reserva. Implementado no modal; não confirma venda nem controla expiração. T-14.",
+    "prioridade": "Alta",
+    "tela": "scr4"
+  },
+  {
+    "id": "RF14",
+    "tipo": "Funcional",
+    "desc": "Alternar loja virtual/PDV mantendo carrinho e perfil compartilhados na sessão. Disponível na navegação; filtros dos modos são independentes, sem sincronização entre dispositivos. T-15.",
+    "prioridade": "Alta",
+    "tela": "scr3"
+  },
+  {
+    "id": "RF15",
+    "tipo": "Funcional",
+    "desc": "Persistir carrinho, cliente e reservas no navegador e restaurar ao abrir. São salvos carrinho, perfil e reservas; pedidos, filtros e modo não persistem. Falta recuperação de armazenamento inválido. T-17/T-18.",
+    "prioridade": "Alta",
+    "tela": "scr2"
+  },
+  {
+    "id": "RNF01",
+    "tipo": "Não funcional",
+    "desc": "Usabilidade e responsividade: permitir operação em 360, 768 e 1440 px, sem perda de ações, com teclado, foco e nomes acessíveis. Parcial: a interface se adapta ao espaço disponível; validar tamanhos de tela e corrigir semântica/foco dos modais. Critérios propostos, ainda não aferidos; T-19.",
+    "prioridade": "Alta",
+    "tela": "scr1"
+  },
+  {
+    "id": "RNF02",
+    "tipo": "Não funcional",
+    "desc": "Eficiência: meta proposta de atualização de filtro em até 200 ms para o catálogo atual em dispositivo de referência; medir interação antes de aprovar. Imagens do catálogo são carregadas conforme a navegação; não há ensaio de desempenho. O tempo de resposta ao usuário ainda não foi medido; T-20.",
+    "prioridade": "Média",
+    "tela": "scr1"
+  },
+  {
+    "id": "RNF03",
+    "tipo": "Não funcional",
+    "desc": "Confiabilidade: restaurar estado válido e manter interface operável diante de dados salvos inválidos ou falha de gravação; preservar pedidos e evitar divergência concorrente. Não atendido integralmente: armazenamento no navegador sem recuperação de falhas, sem histórico e sem servidor; T-17/T-18.",
+    "prioridade": "Alta",
+    "tela": "scr2"
+  },
+  {
+    "id": "RNF04",
+    "tipo": "Não funcional",
+    "desc": "Segurança: autenticar cliente/operador, autorizar operações e validar estoque, preço e benefícios no servidor antes de venda real. Não implementado; dados atuais são fictícios e manipuláveis no cliente. T-21.",
+    "prioridade": "Alta",
+    "tela": "scr3"
+  },
+  {
+    "id": "RNF05",
+    "tipo": "Não funcional",
+    "desc": "Manutenibilidade, compatibilidade e portabilidade: manter verificações de consistência, preparação reproduzível de versões, testes de regras e fluxos e validação nos navegadores-alvo. Parcial: preparação da versão aprovada; sem rotina automatizada de testes e sem avaliação em diferentes navegadores. T-22.",
+    "prioridade": "Média",
+    "tela": "scr1"
+  }
+];
+function refreshReqScreenOptions(){
+  const screens = collectScreensFromDOM();
+  document.querySelectorAll('#reqTable .tela-select').forEach(sel=>{
+    const current = sel.value;
+    sel.innerHTML = '<option value="">— nenhuma —</option>' +
+      screens.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+    const stillExists = screens.some(s=>s.id===current);
+    sel.value = stillExists ? current : "";
+  });
+}
+function renderReqTable(){
+  const tbody = document.querySelector('#reqTable tbody');
+  tbody.innerHTML='';
+  const screens = collectScreensFromDOM();
+  reqData.forEach((row,i)=>{
+    const tr=document.createElement('tr');
+    const telaOptions = '<option value="">— nenhuma —</option>' +
+      screens.map(s=>`<option value="${s.id}" ${s.id===row.tela?'selected':''}>${s.name}</option>`).join('');
+    tr.innerHTML = `
+      <td contenteditable="true" data-ph="RF0${i+1}" oninput="reqData[${i}].id=this.textContent">${row.id}</td>
+      <td>
+        <select onchange="reqData[${i}].tipo=this.value">
+          <option ${row.tipo==='Funcional'?'selected':''}>Funcional</option>
+          <option ${row.tipo==='Não funcional'?'selected':''}>Não funcional</option>
+        </select>
+      </td>
+      <td contenteditable="true" data-ph="descreva o requisito" oninput="reqData[${i}].desc=this.textContent">${row.desc||''}</td>
+      <td>
+        <select onchange="reqData[${i}].prioridade=this.value">
+          <option ${row.prioridade==='Alta'?'selected':''}>Alta</option>
+          <option ${row.prioridade==='Média'?'selected':''}>Média</option>
+          <option ${row.prioridade==='Baixa'?'selected':''}>Baixa</option>
+        </select>
+      </td>
+      <td><select class="tela-select" onchange="reqData[${i}].tela=this.value">${telaOptions}</select></td>
+      <td><button class="small-btn secondary" onclick="reqData.splice(${i},1); renderReqTable();">remover</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function addRequirementRow(){
+  reqData.push({id:"", tipo:"Funcional", desc:"", prioridade:"Média", tela:""});
+  renderReqTable();
+}
+function initReqData(){
+  const tbody = document.querySelector('#reqTable tbody');
+  if(tbody.children.length>0){
+    reqData = Array.from(tbody.children).map(tr=>{
+      const tds = tr.children;
+      return {
+        id: tds[0].textContent,
+        tipo: tds[1].querySelector('select').value,
+        desc: tds[2].textContent,
+        prioridade: tds[3].querySelector('select').value,
+        tela: tds[4].querySelector('select').value
+      };
+    });
+  }
+  renderReqTable();
+}
+initReqData();
+
+/* ---------- SALVAR CÓPIA ATUALIZADA DO HTML ---------- */
+function prepareForSave(){
+  document.querySelectorAll('input[type=text], input[type=number]').forEach(el=>{
+    el.setAttribute('value', el.value);
+  });
+  document.querySelectorAll('input[type=checkbox]').forEach(el=>{
+    if(el.checked) el.setAttribute('checked','checked'); else el.removeAttribute('checked');
+  });
+  document.querySelectorAll('select').forEach(sel=>{
+    Array.from(sel.options).forEach(o=>o.removeAttribute('selected'));
+    if(sel.selectedOptions[0]) sel.selectedOptions[0].setAttribute('selected','selected');
+  });
+}
+function saveHtmlCopy(){
+  prepareForSave();
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const ts = new Date();
+  const stamp = ts.getFullYear()+''+String(ts.getMonth()+1).padStart(2,'0')+String(ts.getDate()).padStart(2,'0')+'_'+String(ts.getHours()).padStart(2,'0')+String(ts.getMinutes()).padStart(2,'0');
+  a.href = url;
+  a.download = `prancheta_projeto_${stamp}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('footRev').textContent = 'gerado em ' + new Date().toLocaleDateString('pt-BR');
+</script>
+</body>
+</html>
