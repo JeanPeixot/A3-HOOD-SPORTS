@@ -3,6 +3,66 @@ import { useStore } from '../context/StoreContext';
 import { Brand } from './ui/Brand';
 import { money } from './ui/commerce';
 export function LoyaltySection() {
-  const { customer, useCashback, toggleCashback } = useStore();
-  return <section id="fidelidade" className="loyalty-section"><div className="shell loyalty-grid"><div className="loyalty-copy"><span className="eyebrow">02 / VOCÊ FAZ PARTE</span><h2>Quem se move,<br />ganha <em>mais.</em></h2><p>Seu próximo passo começa com uma vantagem.<br />Acumule pontos e cashback na loja e no site.</p><div className="loyalty-benefits"><div><strong>5<span>%</span></strong><span>de volta em cashback</span></div><div><strong>1,5<span>×</span></strong><span>pontos por real gasto</span></div></div><a href="#catalogo" className="text-link">Encontre sua próxima conquista <ArrowUpRight size={19} /></a></div><div className="membership-area"><div className="membership-card"><div className="membership-top"><Brand compact /><span>MEMBER<br />CLUB</span></div><div className="membership-symbol" aria-hidden="true">H/</div><div className="member-name"><small>ESTE CLUBE É SEU.</small><strong>{customer.name}</strong><span>{customer.handle}</span></div><div className="membership-bottom"><span>HOOD SPORTS CLUB</span><span>● ● ● ● &nbsp; VIP</span></div></div><div className="member-balances"><div><span>Seus pontos</span><strong>{customer.totalLoyaltyPoints.toLocaleString('pt-BR')} <small>pts</small></strong></div><div><span>Cashback disponível</span><strong>{money(customer.availableCashback)}</strong></div></div><button className="loyalty-action" aria-pressed={useCashback} onClick={toggleCashback}>{useCashback ? <>Cashback aplicado ao pedido <Check size={19} /></> : <>Usar meu cashback <ArrowRight size={19} /></>}</button><p className="member-history">{customer.inStorePurchases} compras na loja · {customer.onlinePurchases} compras online</p></div></div></section>;
+  const {
+    customer,
+    useCashback,
+    toggleCashback
+  } = useStore();
+  return <section id="fidelidade" className="loyalty-section">
+    <div className="shell loyalty-grid">
+      <div className="loyalty-copy">
+        <span className="eyebrow">02 / VOCÊ FAZ PARTE</span>
+        <h2>Quem se move,<br />ganha <em>mais.</em>
+        </h2>
+        <p>Seu próximo passo começa com uma vantagem.<br />Acumule pontos e cashback na loja e no site.</p>
+        <div className="loyalty-benefits">
+          <div>
+            <strong>5<span>%</span>
+            </strong>
+            <span>de volta em cashback</span>
+          </div>
+          <div>
+            <strong>1,5<span>×</span>
+            </strong>
+            <span>pontos por real gasto</span>
+          </div>
+        </div>
+        <a href="#catalogo" className="text-link">Encontre sua próxima conquista <ArrowUpRight size={19} />
+        </a>
+      </div>
+      <div className="membership-area">
+        <div className="membership-card">
+          <div className="membership-top">
+            <Brand compact />
+            <span>MEMBER<br />CLUB</span>
+          </div>
+          <div className="membership-symbol" aria-hidden="true">H/</div>
+          <div className="member-name">
+            <small>ESTE CLUBE É SEU.</small>
+            <strong>{customer.name}</strong>
+            <span>{customer.handle}</span>
+          </div>
+          <div className="membership-bottom">
+            <span>HOOD SPORTS CLUB</span>
+            <span>● ● ● ● &nbsp; VIP</span>
+          </div>
+        </div>
+        <div className="member-balances">
+          <div>
+            <span>Seus pontos</span>
+            <strong>{customer.totalLoyaltyPoints.toLocaleString('pt-BR')} <small>pts</small>
+            </strong>
+          </div>
+          <div>
+            <span>Cashback disponível</span>
+            <strong>{money(customer.availableCashback)}</strong>
+          </div>
+        </div>
+        <button className="loyalty-action" aria-pressed={useCashback} onClick={toggleCashback}>{useCashback ? <>Cashback aplicado ao pedido <Check size={19} />
+        </> : <>Usar meu cashback <ArrowRight size={19} />
+        </>}</button>
+        <p className="member-history">{customer.inStorePurchases} compras na loja · {customer.onlinePurchases} compras online</p>
+      </div>
+    </div>
+  </section>;
 }

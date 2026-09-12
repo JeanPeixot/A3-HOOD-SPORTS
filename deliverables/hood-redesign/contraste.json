@@ -1,0 +1,44 @@
+[
+  {
+    "uso": "Texto principal escuro",
+    "texto": "#f4f3ee",
+    "fundo": "#101211",
+    "contraste": 16.93
+  },
+  {
+    "uso": "Texto secundário escuro",
+    "texto": "#a5ada6",
+    "fundo": "#101211",
+    "contraste": 8.17
+  },
+  {
+    "uso": "Texto principal catálogo",
+    "texto": "#141815",
+    "fundo": "#f4f3ee",
+    "contraste": 16.14
+  },
+  {
+    "uso": "Texto secundário catálogo",
+    "texto": "#606861",
+    "fundo": "#f4f3ee",
+    "contraste": 5.18
+  },
+  {
+    "uso": "CTA ciano",
+    "texto": "#141815",
+    "fundo": "#00e5ff",
+    "contraste": 11.66
+  },
+  {
+    "uso": "Texto secundário clube",
+    "texto": "#3e5a50",
+    "fundo": "#ccf3e9",
+    "contraste": 6.31
+  },
+  {
+    "uso": "Texto secundário PDV",
+    "texto": "#a5ada6",
+    "fundo": "#1a1d1b",
+    "contraste": 7.39
+  }
+]

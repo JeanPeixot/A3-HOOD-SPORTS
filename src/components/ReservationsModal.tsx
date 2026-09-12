@@ -2,7 +2,56 @@ import { ArrowUpRight, Bookmark, Trash2, X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { Dialog } from './ui/Dialog';
 import { money } from './ui/commerce';
-export function ReservationsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const { reservations, cancelReservation, addToCart } = useStore();
-  return <Dialog open={isOpen} onClose={onClose} titleId="reservations-title"><div className="dialog-header"><div><span className="eyebrow">ESCOLHAS QUE ESPERAM POR VOCÊ</span><h2 id="reservations-title">Minhas reservas<span> / {reservations.length.toString().padStart(2, '0')}</span></h2></div><button className="icon-button" aria-label="Fechar reservas" onClick={onClose}><X size={22} /></button></div><div className="dialog-body">{reservations.length ? <div className="reservation-list">{reservations.map(reservation => <article className="reservation-item" key={reservation.id}><img src={reservation.product.image} alt="" width="80" height="100" /><div><h3>{reservation.product.name}</h3><p>Tamanho {reservation.selectedSize} · {reservation.reservedAt}</p><small>Prazo informado: {reservation.expiresInDays} dias</small><strong>{money(reservation.product.price)}</strong><div className="reservation-actions"><button className="text-link" onClick={() => { addToCart(reservation.product, reservation.selectedSize); cancelReservation(reservation.id); }}>Mover para a sacola <ArrowUpRight size={16} /></button><button className="icon-button remove-button" aria-label={`Cancelar reserva de ${reservation.product.name}`} onClick={() => cancelReservation(reservation.id)}><Trash2 size={16} /></button></div></div></article>)}</div> : <div className="empty-state"><Bookmark size={34} strokeWidth={1.4} /><h3>Seu próximo favorito está no catálogo.</h3><p>Use o ícone de reserva ao lado de Adicionar para salvar um produto e seu tamanho.</p><button className="button button-primary" onClick={() => { onClose(); document.getElementById('catalogo')?.scrollIntoView(); }}>Explorar produtos <ArrowUpRight size={18} /></button></div>}</div></Dialog>;
+export function ReservationsModal({
+  isOpen,
+  onClose
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const {
+    reservations,
+    cancelReservation,
+    addToCart
+  } = useStore();
+  return <Dialog open={isOpen} onClose={onClose} titleId="reservations-title">
+    <div className="dialog-header">
+      <div>
+        <span className="eyebrow">ESCOLHAS QUE ESPERAM POR VOCÊ</span>
+        <h2 id="reservations-title">Minhas reservas<span> / {reservations.length.toString().padStart(2, '0')}</span>
+        </h2>
+      </div>
+      <button className="icon-button" aria-label="Fechar reservas" onClick={onClose}>
+        <X size={22} />
+      </button>
+    </div>
+    <div className="dialog-body">{reservations.length ? <div className="reservation-list">{reservations.map(reservation => <article className="reservation-item" key={reservation.id}>
+      <img src={reservation.product.image} alt="" width="80" height="100" />
+      <div>
+        <h3>{reservation.product.name}</h3>
+        <p>Tamanho {reservation.selectedSize} · {reservation.reservedAt}</p>
+        <small>Prazo informado: {reservation.expiresInDays} dias</small>
+        <strong>{money(reservation.product.price)}</strong>
+        <div className="reservation-actions">
+          <button className="text-link" onClick={() => {
+            cancelReservation(reservation.id);
+            addToCart(reservation.product, reservation.selectedSize);
+          }}>Mover para a sacola <ArrowUpRight size={16} />
+          </button>
+          <button className="icon-button remove-button" aria-label={`Cancelar reserva de ${reservation.product.name}`} onClick={() => cancelReservation(reservation.id)}>
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+    </article>)}</div> : <div className="empty-state">
+      <Bookmark size={34} strokeWidth={1.4} />
+      <h3>Seu próximo favorito está no catálogo.</h3>
+      <p>Use o ícone de reserva ao lado de Adicionar para salvar um produto e seu tamanho.</p>
+      <button className="button button-primary" onClick={() => {
+        onClose();
+        document.getElementById('catalogo')?.scrollIntoView();
+      }}>Explorar produtos <ArrowUpRight size={18} />
+      </button>
+    </div>}</div>
+  </Dialog>;
 }
