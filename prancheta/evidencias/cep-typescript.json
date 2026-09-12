@@ -1,0 +1,85 @@
+{
+  "date": "2026-09-10T19:00:29.224538-03:00",
+  "metric": "Tempo de verificação TypeScript (ms)",
+  "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false",
+  "environment": "macOS-26.2-arm64-arm-64bit-Mach-O",
+  "node": "v26.0.0",
+  "notes": "15 execuções consecutivas no mesmo ambiente; sem alteração de código; inclui inicialização do processo; não mede latência da aplicação nem estabilidade entre sprints.",
+  "measurements": [
+    {
+      "label": "E01",
+      "value": 742.62,
+      "exitCode": 0
+    },
+    {
+      "label": "E02",
+      "value": 644.21,
+      "exitCode": 0
+    },
+    {
+      "label": "E03",
+      "value": 637.63,
+      "exitCode": 0
+    },
+    {
+      "label": "E04",
+      "value": 605.71,
+      "exitCode": 0
+    },
+    {
+      "label": "E05",
+      "value": 603.02,
+      "exitCode": 0
+    },
+    {
+      "label": "E06",
+      "value": 603.58,
+      "exitCode": 0
+    },
+    {
+      "label": "E07",
+      "value": 601.77,
+      "exitCode": 0
+    },
+    {
+      "label": "E08",
+      "value": 613.97,
+      "exitCode": 0
+    },
+    {
+      "label": "E09",
+      "value": 594.33,
+      "exitCode": 0
+    },
+    {
+      "label": "E10",
+      "value": 609.69,
+      "exitCode": 0
+    },
+    {
+      "label": "E11",
+      "value": 603.89,
+      "exitCode": 0
+    },
+    {
+      "label": "E12",
+      "value": 592.74,
+      "exitCode": 0
+    },
+    {
+      "label": "E13",
+      "value": 590.52,
+      "exitCode": 0
+    },
+    {
+      "label": "E14",
+      "value": 609.15,
+      "exitCode": 0
+    },
+    {
+      "label": "E15",
+      "value": 604.02,
+      "exitCode": 0
+    }
+  ]
+}

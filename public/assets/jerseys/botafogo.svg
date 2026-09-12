@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18202E" />
+      <stop offset="100%" stop-color="#0E121A" />
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+    <clipPath id="jerseyClip-botafogo">
+      <path d="M 170,80 L 120,120 L 50,180 L 100,240 L 145,200 L 145,430 L 355,430 L 355,200 L 400,240 L 450,180 L 380,120 L 330,80 C 300,125 200,125 170,80 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- Background rounded card -->
+  <rect width="500" height="500" rx="30" fill="url(#bgGlow)" />
+  
+  <!-- Subtle athletic grid lines -->
+  <circle cx="250" cy="250" r="210" fill="none" stroke="#232D42" stroke-width="1.5" stroke-dasharray="6 6" />
+
+  <!-- Jersey Group with Drop Shadow -->
+  <g filter="url(#dropShadow)">
+    
+    <!-- Base Fill -->
+    <path d="M 170,80 L 120,120 L 50,180 L 100,240 L 145,200 L 145,430 L 355,430 L 355,200 L 400,240 L 450,180 L 380,120 L 330,80 C 300,125 200,125 170,80 Z" fill="#FFFFFF" stroke="#1E2638" stroke-width="3" />
+
+    <!-- Clipped Custom Patterns -->
+    <g clip-path="url(#jerseyClip-botafogo)">
+      
+      <rect x="175" y="90" width="36" height="340" fill="#111111" />
+      <rect x="232" y="130" width="36" height="300" fill="#111111" />
+      <rect x="289" y="90" width="36" height="340" fill="#111111" />
+      <polygon points="50,180 120,120 145,200 100,240" fill="#111111" />
+      <polygon points="450,180 380,120 355,200 400,240" fill="#111111" />
+    
+    </g>
+
+    <!-- Collar & Neck Line -->
+    <path d="M 170,80 C 200,125 300,125 330,80 C 310,140 190,140 170,80 Z" fill="#111111" stroke="#1E2638" stroke-width="2" />
+    <path d="M 210,125 L 250,150 L 290,125" fill="none" stroke="#FFFFFF" stroke-width="3" />
+
+    <!-- Sleeve Cuffs -->
+    <path d="M 50,180 L 100,240 L 115,225 L 65,165 Z" fill="#111111" />
+    <path d="M 450,180 L 400,240 L 385,225 L 435,165 Z" fill="#111111" />
+
+    <!-- Club Crest on Left Chest (Viewer's Left / Heart) -->
+    <g transform="translate(195, 175)">
+      
+      <polygon points="-18,-18 18,-18 18,5 0,22 -18,5" fill="#111111" stroke="#FFFFFF" stroke-width="2.5" />
+      <polygon points="0,-12 3.5,-3 12,-3 5,3 8,12 0,6 -8,12 -5,3 -12,-3 -3.5,-3" fill="#FFFFFF" />
+    
+    </g>
+
+    <!-- Manufacturer Logo on Right Chest -->
+    <g transform="translate(285, 175)">
+      
+      <path d="M-8,-8 L8,8 M-8,8 L8,-8" stroke="#FFFFFF" stroke-width="3" />
+    
+    </g>
+
+    <!-- Center Sponsor / Chest Text -->
+    
+      <text x="250" y="260" fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="900" text-anchor="middle" letter-spacing="3">PARIMATCH</text>
+    
+  </g>
+
+  <!-- Club Name Label Banner at Bottom -->
+  <rect x="50" y="445" width="400" height="36" rx="10" fill="#131822" stroke="#232D42" stroke-width="1" />
+  <text x="250" y="468" fill="#FFFFFF" font-family="'Montserrat', Inter, sans-serif" font-size="14" font-weight="900" text-anchor="middle" letter-spacing="2">
+    BOTAFOGO FR - ESTRELA SOLITÁRIA
+  </text>
+  <circle cx="90" cy="463" r="4" fill="#00E5FF" />
+  <circle cx="410" cy="463" r="4" fill="#00E5FF" />
+</svg>

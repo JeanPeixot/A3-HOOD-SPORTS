@@ -8,14 +8,14 @@ export default {
     extend: {
       colors: {
         hood: {
-          bg: '#0A0D14',
-          card: '#131822',
-          surface: '#1A2232',
-          border: '#232D42',
+          bg: '#101211',
+          card: '#1A1D1B',
+          surface: '#202B23',
+          border: '#343936',
           cyan: '#00E5FF',
           'cyan-hover': '#00C8E0',
           'cyan-dark': '#008394',
-          muted: '#8E9BAE',
+          muted: '#A5ADA6',
           accent: '#00F0FF',
         }
       },
